@@ -5,5 +5,5 @@ using System.Threading.Tasks;
 
 namespace Application.Dtos
 {
-    public record CourierDto(Guid Id, string Name, string Cnpj, DateTime BirthDate, string CnhNumber, string CnhCategory, string CnhImagePath);
+   public record CourierDto(Guid Id, string Name, string Cnpj, DateTime BirthDate, string CnhNumber, string CnhCategory, string? CnhImagePath);
 }
