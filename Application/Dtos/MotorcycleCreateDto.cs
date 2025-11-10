@@ -1,6 +1,9 @@
-using System;
-
 namespace Application.Dtos
 {
-    public record MotorcycleCreateDto(Guid Id, int Year, string Model, string Plate);
+    public class MotorcycleCreateDto
+    {
+        public string Model { get; set; } = string.Empty;
+        public string Plate { get; set; } = string.Empty;
+        public int Year { get; set; }
+    }
 }

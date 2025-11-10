@@ -42,6 +42,14 @@ builder.Services.AddSwaggerGen(c =>
 // ======================
 var app = builder.Build();
 
+// --- Seed de dados iniciais ---
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    context.Database.EnsureCreated();
+    Infra.Data.DbInitializer.Seed(context);
+}
+
 //  Garante criação do banco (opcional, ajuda muito no primeiro run)
 using (var scope = app.Services.CreateScope())
 {

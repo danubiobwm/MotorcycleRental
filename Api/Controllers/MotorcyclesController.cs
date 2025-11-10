@@ -1,6 +1,7 @@
+using Application.Dtos;
+using Application.Services;
 using Microsoft.AspNetCore.Mvc;
-using Domain.Entities;
-using Domain.Interfaces;
+using System.Threading.Tasks;
 
 namespace Api.Controllers
 {
@@ -8,25 +9,32 @@ namespace Api.Controllers
     [Route("api/[controller]")]
     public class MotorcyclesController : ControllerBase
     {
-        private readonly IMotorcycleRepository _repository;
+        private readonly MotorcycleService _motorcycleService;
 
-        public MotorcyclesController(IMotorcycleRepository repository)
+        public MotorcyclesController(MotorcycleService motorcycleService)
         {
-            _repository = repository;
+            _motorcycleService = motorcycleService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var motorcycles = await _repository.GetAllAsync();
+            var motorcycles = await _motorcycleService.GetAllAsync();
             return Ok(motorcycles);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Motorcycle motorcycle)
+        public async Task<IActionResult> Create([FromBody] MotorcycleCreateDto dto)
         {
-            await _repository.AddAsync(motorcycle);
-            return CreatedAtAction(nameof(GetAll), motorcycle);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _motorcycleService.CreateAsync(dto);
+
+            if (!result.Success)
+                return BadRequest(result.Errors);
+
+            return Ok(result.Data);
         }
     }
 }

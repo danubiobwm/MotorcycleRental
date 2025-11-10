@@ -1,45 +1,44 @@
-###  Criar motocicleta
-POST http://localhost:5000/api/motorcycles
+###  Listar todas as motos
+GET http://localhost:5000/api/Motorcycles
+Accept: application/json
+
+###
+
+###  Criar moto
+POST http://localhost:5000/api/Motorcycles
 Content-Type: application/json
 
 {
-  "model": "Honda CG 160",
-  "year": 2023,
-  "plate": "ABC1D23"
+  "model": "Honda CG 160 Start",
+  "plate": "AAA0B11",
+  "year": 2024
 }
 
 ###
 
-###  Listar motocicletas
-GET http://localhost:5000/api/motorcycles
+###  Listar todos os entregadores
+GET http://localhost:5000/api/Couriers
 Accept: application/json
 
 ###
 
 ###  Criar entregador
-POST http://localhost:5000/api/couriers
+POST http://localhost:5000/api/Couriers
 Content-Type: application/json
 
 {
-  "name": "João Silva",
-  "cnpj": "12345678000199",
-  "birthDate": "1990-05-10",
-  "cnhNumber": "9988776655",
+  "name": "Carlos Pereira",
+  "cnpj": "11122233000144",
+  "birthDate": "1992-07-12",
+  "cnhNumber": "6677889900",
   "cnhCategory": "A",
-  "cnhImagePath": "/uploads/cnh/joao_silva.jpg"
+  "cnhImagePath": "/uploads/cnh/carlos.jpg"
 }
 
 ###
 
-###  Listar entregadores
-GET http://localhost:5000/api/couriers
-Accept: application/json
-
-###
-
 ###  Criar aluguel de moto
-# Substitua GUID_DO_COURIER e GUID_DA_MOTO pelos IDs retornados nos endpoints anteriores
-POST http://localhost:5000/api/rentals
+POST http://localhost:5000/api/Rentals
 Content-Type: application/json
 
 {
@@ -51,18 +50,17 @@ Content-Type: application/json
 
 ###
 
-###  Listar aluguéis
-GET http://localhost:5000/api/rentals
-Accept: application/json
-
-###
-
 ###  Devolver moto
-# Substitua GUID_DO_ALUGUEL pelo ID do aluguel criado
-POST http://localhost:5000/api/rentals/return
+POST http://localhost:5000/api/Rentals/return
 Content-Type: application/json
 
 {
   "rentalId": "GUID_DO_ALUGUEL",
   "returnDate": "2025-11-10"
 }
+
+###
+
+###  Listar todos os aluguéis
+GET http://localhost:5000/api/Rentals
+Accept: application/json
