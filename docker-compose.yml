@@ -41,6 +41,7 @@ services:
       - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=motorcycle_rental;Username=postgres;Password=postgres
       - RabbitMq__Host=rabbitmq
       - Storage__Path=/data/storage
+      - ASPNETCORE_URLS=http://+:80
     ports:
       - "5000:80"
     volumes:
