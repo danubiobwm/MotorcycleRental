@@ -36,7 +36,7 @@ namespace Infra.Data
                         Id = Guid.Parse("33333333-3333-3333-3333-333333333333"),
                         Name = "João Entregador",
                         Cnpj = "12345678000100",
-                        BirthDate = new DateTime(1990, 5, 12),
+                        BirthDate = DateTime.SpecifyKind(new DateTime(1990, 5, 12), DateTimeKind.Utc),
                         CnhNumber = "12345678900",
                         CnhCategory = "A",
                         CnhImagePath = "/storage/cnh/joao.jpg"
@@ -46,13 +46,14 @@ namespace Infra.Data
                         Id = Guid.Parse("44444444-4444-4444-4444-444444444444"),
                         Name = "Maria das Entregas",
                         Cnpj = "98765432000199",
-                        BirthDate = new DateTime(1985, 8, 22),
+                        BirthDate = DateTime.SpecifyKind(new DateTime(1985, 8, 22), DateTimeKind.Utc),
                         CnhNumber = "98765432100",
                         CnhCategory = "AB",
                         CnhImagePath = "/storage/cnh/maria.jpg"
                     }
                 );
             }
+
 
             context.SaveChanges();
         }
