@@ -119,6 +119,9 @@ namespace Infra.Migrations
                     b.Property<Guid>("CourierId")
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<decimal>("DailyRate")
                         .HasPrecision(10, 2)
                         .HasColumnType("numeric(10,2)");

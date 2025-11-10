@@ -1,72 +1,19 @@
-###  Criar moto
-POST http://localhost:5000/api/motorcycles
+### 🏍️ Criar aluguel
+POST http://localhost:8080/api/rentals
 Content-Type: application/json
 
 {
-  "model": "Honda CG 160",
-  "year": 2023,
-  "plate": "ABC1234"
-}
-
-###
-
-###  Listar motos
-GET http://localhost:5000/api/motorcycles
-Accept: application/json
-
-###
-
-###  Criar entregador
-POST http://localhost:5000/api/couriers
-Content-Type: application/json
-
-{
-  "name": "João Silva",
-  "cnpj": "12345678000199",
-  "birthDate": "1990-05-10",
-  "cnhNumber": "9988776655",
-  "cnhCategory": "A",
-  "cnhImagePath": "/uploads/cnh/joao.jpg"
-}
-
-###
-
-###  Listar entregadores
-GET http://localhost:5000/api/couriers
-Accept: application/json
-
-###
-
-###  Criar aluguel de moto
-POST http://localhost:5000/api/rentals
-Content-Type: application/json
-
-{
-  "courierId": "GUID_DO_COURIER",
-  "motorcycleId": "GUID_DA_MOTO",
+  "courierId": "00000000-0000-0000-0000-000000000001",
+  "motorcycleId": "00000000-0000-0000-0000-000000000002",
   "planDays": 7,
-  "dailyRate": 50.00
+  "dailyRate": 100
 }
 
-###
-
-###  Listar aluguéis
-GET http://localhost:5000/api/rentals
-Accept: application/json
-
-###
-
-###  Devolver moto
-POST http://localhost:5000/api/rentals/return
+### 🔙 Finalizar aluguel
+POST http://localhost:8080/api/rentals/return
 Content-Type: application/json
 
 {
-  "rentalId": "GUID_DO_ALUGUEL",
-  "returnDate": "2025-11-10"
+  "rentalId": "00000000-0000-0000-0000-000000000003",
+  "returnDate": "2025-11-09T12:00:00Z"
 }
-
-###
-
-###  Listar notificações
-GET http://localhost:5000/api/notifications
-Accept: application/json
