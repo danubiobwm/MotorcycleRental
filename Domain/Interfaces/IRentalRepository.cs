@@ -6,5 +6,6 @@ namespace Domain.Interfaces
     {
         Task<IEnumerable<Rental>> GetByCourierIdAsync(Guid courierId);
         Task<IEnumerable<Rental>> GetByMotorcycleIdAsync(Guid motorcycleId);
+        Task<bool> HasRentalsForMotorcycleAsync(Guid motorcycleId);
     }
 }

@@ -1,8 +1,8 @@
 version: '3.8'
-
 services:
   postgres:
     image: postgres:15
+    restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -14,6 +14,7 @@ services:
 
   rabbitmq:
     image: rabbitmq:3-management
+    hostname: rabbitmq
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
@@ -22,7 +23,9 @@ services:
       - "15672:15672"
 
   api:
-    build: .
+    build:
+      context: .
+      dockerfile: Api/Dockerfile
     depends_on:
       - postgres
       - rabbitmq

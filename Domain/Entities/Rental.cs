@@ -22,6 +22,9 @@ namespace Domain.Entities
         public Motorcycle Motorcycle { get; set; }
 
         [Required]
+        public DateTime CreationDate { get; set; } = DateTime.UtcNow;
+
+        [Required]
         public DateTime StartDate { get; set; }
 
         [Required]

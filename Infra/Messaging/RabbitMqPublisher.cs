@@ -1,35 +1,27 @@
-using RabbitMQ.Client;
 using System.Text;
 using System.Text.Json;
-using RabbitMQ.Client.Events;
-
-
-
+using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using RabbitMQ.Client;
 
 namespace Infra.Messaging
 {
-    public interface IRabbitMqPublisher
-    {
-        Task PublishAsync(string queue, object message);
-    }
-
     public class RabbitMqPublisher : IRabbitMqPublisher
     {
         private readonly ConnectionFactory _factory;
-
-        public RabbitMqPublisher()
+        public RabbitMqPublisher(IConfiguration cfg)
         {
-            _factory = new ConnectionFactory() { HostName = "rabbitmq", Port = 5672 };
+            var host = cfg["RabbitMq__Host"] ?? "localhost";
+            _factory = new ConnectionFactory() { HostName = host };
         }
 
-        public Task PublishAsync(string queue, object message)
+        public Task PublishAsync<T>(string routingKey, T @event)
         {
-            using var connection = _factory.CreateConnection();
-            using var channel = connection.CreateModel();
-            channel.QueueDeclare(queue, durable: false, exclusive: false, autoDelete: false);
-
-            var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
-            channel.BasicPublish("", queue, null, body);
+            using var conn = _factory.CreateConnection();
+            using var channel = conn.CreateModel();
+            channel.ExchangeDeclare(exchange: "motorcycle_exchange", type: ExchangeType.Fanout, durable: true);
+            var body = JsonSerializer.SerializeToUtf8Bytes(@event);
+            channel.BasicPublish(exchange: "motorcycle_exchange", routingKey: routingKey, basicProperties: null, body: body);
             return Task.CompletedTask;
         }
     }
