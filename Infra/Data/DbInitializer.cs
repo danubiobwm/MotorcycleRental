@@ -8,45 +8,51 @@ namespace Infra.Data
     {
         public static void Seed(AppDbContext context)
         {
-            if (context.Motorcycles.Any() || context.Couriers.Any())
-                return;
-
-            // --- Motocicletas iniciais ---
-            var motorcycles = new[]
+            if (!context.Motorcycles.Any())
             {
-                new Motorcycle { Id = Guid.NewGuid(), Model = "Honda CG 160", Plate = "ABC1D23", Year = 2022 },
-                new Motorcycle { Id = Guid.NewGuid(), Model = "Yamaha Factor 150", Plate = "XYZ9K87", Year = 2023 },
-                new Motorcycle { Id = Guid.NewGuid(), Model = "Honda Biz 125", Plate = "QWE4R56", Year = 2021 }
-            };
+                context.Motorcycles.AddRange(
+                    new Motorcycle
+                    {
+                        Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
+                        Plate = "ABC1D23",
+                        Model = "Honda CG 160",
+                        Year = 2022,
+                    },
+                    new Motorcycle
+                    {
+                        Id = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+                        Plate = "XYZ9Z99",
+                        Model = "Yamaha Fazer 250",
+                        Year = 2023,
+                    }
+                );
+            }
 
-            context.Motorcycles.AddRange(motorcycles);
-
-            // --- Entregadores iniciais ---
-            var couriers = new[]
+            if (!context.Couriers.Any())
             {
-                new Courier
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "João Silva",
-                    Cnpj = "12345678000199",
-                    BirthDate = new DateTime(1990, 5, 10),
-                    CnhNumber = "9988776655",
-                    CnhCategory = "A",
-                    CnhImagePath = "/uploads/cnh/joao.jpg"
-                },
-                new Courier
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "Maria Oliveira",
-                    Cnpj = "98765432000188",
-                    BirthDate = new DateTime(1988, 3, 15),
-                    CnhNumber = "5566778899",
-                    CnhCategory = "A",
-                    CnhImagePath = "/uploads/cnh/maria.jpg"
-                }
-            };
-
-            context.Couriers.AddRange(couriers);
+                context.Couriers.AddRange(
+                    new Courier
+                    {
+                        Id = Guid.Parse("33333333-3333-3333-3333-333333333333"),
+                        Name = "João Entregador",
+                        Cnpj = "12345678000100",
+                        BirthDate = new DateTime(1990, 5, 12),
+                        CnhNumber = "12345678900",
+                        CnhCategory = "A",
+                        CnhImagePath = "/storage/cnh/joao.jpg"
+                    },
+                    new Courier
+                    {
+                        Id = Guid.Parse("44444444-4444-4444-4444-444444444444"),
+                        Name = "Maria das Entregas",
+                        Cnpj = "98765432000199",
+                        BirthDate = new DateTime(1985, 8, 22),
+                        CnhNumber = "98765432100",
+                        CnhCategory = "AB",
+                        CnhImagePath = "/storage/cnh/maria.jpg"
+                    }
+                );
+            }
 
             context.SaveChanges();
         }

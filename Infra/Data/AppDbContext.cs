@@ -76,27 +76,6 @@ namespace Infra.Data
             modelBuilder.Entity<Rental>()
                 .Property(r => r.DailyRate)
                 .HasPrecision(10, 2);
-
-
-            modelBuilder.Entity<Motorcycle>().HasData(
-    new Motorcycle { Id = Guid.NewGuid(), Model = "Honda CG 160", Plate = "ABC1D23", Year = 2022 },
-    new Motorcycle { Id = Guid.NewGuid(), Model = "Yamaha Factor 150", Plate = "XYZ9E88", Year = 2023 }
-);
-
-            modelBuilder.Entity<Courier>().HasData(
-                new Courier
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "João da Entrega",
-                    Cnpj = "12345678000199",
-                    BirthDate = new DateTime(1990, 5, 12),
-                    CnhNumber = "CNH12345",
-                    CnhCategory = "A",
-                    CnhImagePath = "uploads/cnh_joao.png"
-                }
-            );
-
-
         }
     }
 }
