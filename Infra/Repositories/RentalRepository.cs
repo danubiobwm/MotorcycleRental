@@ -20,5 +20,9 @@ namespace Infra.Repositories
             return await _context.Rentals.AsNoTracking()
                 .Where(r => r.MotorcycleId == motorcycleId).ToListAsync();
         }
+        public async Task<bool> HasRentalsForMotorcycleAsync(Guid motorcycleId)
+        {
+            return await _context.Rentals.AnyAsync(r => r.MotorcycleId == motorcycleId);
+        }
     }
 }
