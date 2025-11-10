@@ -1,66 +1,91 @@
-###  Listar todas as motos
-GET http://localhost:5000/api/Motorcycles
+@baseUrl = http://localhost:5000/api
+@courierJoao = 33333333-3333-3333-3333-333333333333
+@courierMaria = 44444444-4444-4444-4444-444444444444
+@motoHonda = 11111111-1111-1111-1111-111111111111
+@motoYamaha = 22222222-2222-2222-2222-222222222222
+
+
+##################################################
+###  COURIERS (ENTREGADORES)
+##################################################
+
+### Listar entregadores existentes
+GET {{baseUrl}}/Couriers
 Accept: application/json
 
-###
 
-###  Criar moto
-POST http://localhost:5000/api/Motorcycles
+### Criar novo entregador
+POST {{baseUrl}}/Couriers
 Content-Type: application/json
 
 {
-  "model": "Honda CG 160 Start",
-  "plate": "AAA0B11",
-  "year": 2024
-}
-
-###
-
-###  Listar todos os entregadores
-GET http://localhost:5000/api/Couriers
-Accept: application/json
-
-###
-
-###  Criar entregador
-POST http://localhost:5000/api/Couriers
-Content-Type: application/json
-
-{
-  "name": "Carlos Pereira",
-  "cnpj": "11122233000144",
-  "birthDate": "1992-07-12",
-  "cnhNumber": "6677889900",
+  "name": "Carlos Souza",
+  "cnpj": "11122233000145",
+  "birthDate": "1992-07-14",
+  "cnhNumber": "6677889910",
   "cnhCategory": "A",
   "cnhImagePath": "/uploads/cnh/carlos.jpg"
 }
 
-###
 
-###  Criar aluguel de moto
-POST http://localhost:5000/api/Rentals
+##################################################
+###  MOTOCYCLES (MOTOS)
+##################################################
+
+### Listar todas as motos
+GET {{baseUrl}}/Motorcycles
+Accept: application/json
+
+
+### Criar nova moto
+POST {{baseUrl}}/Motorcycles
 Content-Type: application/json
 
 {
-  "courierId": "GUID_DO_COURIER",
-  "motorcycleId": "GUID_DA_MOTO",
+  "plate": "JKL9M10",
+  "model": "Honda Biz 125",
+  "year": 2021
+}
+
+
+##################################################
+### RENTALS (ALUGUÉIS)
+##################################################
+
+### Criar aluguel (João aluga Honda CG 160)
+POST {{baseUrl}}/Rentals
+Content-Type: application/json
+
+{
+  "courierId": "{{courierJoao}}",
+  "motorcycleId": "{{motoHonda}}",
   "planDays": 7,
   "dailyRate": 50.00
 }
 
-###
 
-###  Devolver moto
-POST http://localhost:5000/api/Rentals/return
+### Criar aluguel (Maria aluga Yamaha Fazer)
+POST {{baseUrl}}/Rentals
 Content-Type: application/json
 
 {
-  "rentalId": "GUID_DO_ALUGUEL",
-  "returnDate": "2025-11-10"
+  "courierId": "{{courierMaria}}",
+  "motorcycleId": "{{motoYamaha}}",
+  "planDays": 15,
+  "dailyRate": 65.00
 }
 
-###
 
-###  Listar todos os aluguéis
-GET http://localhost:5000/api/Rentals
+### Listar todos os aluguéis
+GET {{baseUrl}}/Rentals
 Accept: application/json
+
+
+### Devolver moto (substitua RENTAL_ID pelo GUID retornado da criação)
+POST {{baseUrl}}/Rentals/return
+Content-Type: application/json
+
+{
+  "rentalId": "RENTAL_ID",
+  "returnDate": "2025-11-10"
+}
