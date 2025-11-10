@@ -22,6 +22,8 @@ builder.Services.AddScoped<MotorcycleService>();
 builder.Services.AddScoped<CourierService>();
 builder.Services.AddScoped<RentalService>();
 
+
+
 // Add background consumer
 builder.Services.AddHostedService<MotorcycleRegisteredConsumer>();
 

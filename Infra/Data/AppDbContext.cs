@@ -10,6 +10,7 @@ namespace Infra.Data
         {
         }
 
+
         // DbSets
         public DbSet<Motorcycle> Motorcycles { get; set; } = null!;
         public DbSet<Courier> Couriers { get; set; } = null!;
