@@ -52,10 +52,10 @@ namespace Application.Services
                 motorcycle.Id,
                 rental.StartDate,
                 rental.ExpectedEndDate,
-                rental.StartDate,
                 rental.EndDate,
                 rental.PlanDays,
-                rental.DailyRate
+                rental.DailyRate,
+                rental.TotalCost
             );
         }
 
