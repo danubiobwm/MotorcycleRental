@@ -33,7 +33,7 @@ namespace Api.Controllers
                 if (rental == null)
                     return BadRequest(new { error = "Courier or Motorcycle not found" });
 
-                return CreatedAtAction(nameof(GetAll), new { id = rental.Id }, rental);
+                return CreatedAtAction(nameof(GetById), new { id = rental.Id }, rental);
             }
             catch (Exception ex)
             {
@@ -42,13 +42,38 @@ namespace Api.Controllers
         }
 
         /// <summary>
-        /// Devolve uma motocicleta alugada.
+        /// Lista todos os aluguéis existentes.
         /// </summary>
-        [HttpPost("return")]
-        public async Task<IActionResult> Return([FromBody] RentalReturnDto dto)
+        [HttpGet]
+        public async Task<IActionResult> GetAll([FromServices] Domain.Interfaces.IRepository<Domain.Entities.Rental> rentalRepository)
+        {
+            var rentals = await rentalRepository.GetAllAsync();
+            return Ok(rentals);
+        }
+
+        /// <summary>
+        /// Busca um aluguel por ID.
+        /// </summary>
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> GetById(Guid id, [FromServices] Domain.Interfaces.IRepository<Domain.Entities.Rental> rentalRepository)
+        {
+            var rental = await rentalRepository.GetByIdAsync(id);
+            if (rental == null)
+                return NotFound(new { error = "Rental not found" });
+
+            return Ok(rental);
+        }
+
+        /// <summary>
+        /// Devolve uma motocicleta alugada (PATCH /Rentals/{id}/return).
+        /// </summary>
+        [HttpPatch("{id:guid}/return")]
+        public async Task<IActionResult> Return(Guid id, [FromBody] RentalReturnDto dto)
         {
             if (dto == null)
                 return BadRequest(new { error = "Body (dto) is required" });
+
+            dto = dto with { RentalId = id };
 
             try
             {
@@ -63,16 +88,6 @@ namespace Api.Controllers
             {
                 return StatusCode(500, new { error = "An unexpected error occurred.", details = ex.Message });
             }
-        }
-
-        /// <summary>
-        /// Lista todos os aluguéis (para debug ou histórico).
-        /// </summary>
-        [HttpGet]
-        public async Task<IActionResult> GetAll([FromServices] Domain.Interfaces.IRepository<Domain.Entities.Rental> rentalRepository)
-        {
-            var rentals = await rentalRepository.GetAllAsync();
-            return Ok(rentals);
         }
     }
 }

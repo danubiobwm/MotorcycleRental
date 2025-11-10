@@ -8,10 +8,13 @@
 ###  COURIERS (ENTREGADORES)
 ##################################################
 
-### Listar entregadores existentes
+### Listar todos os entregadores
 GET {{baseUrl}}/Couriers
 Accept: application/json
 
+### Buscar entregador por ID
+GET {{baseUrl}}/Couriers/{{courierJoao}}
+Accept: application/json
 
 ### Criar novo entregador
 POST {{baseUrl}}/Couriers
@@ -26,20 +29,17 @@ Content-Type: application/json
   "cnhImagePath": "/uploads/cnh/carlos.jpg"
 }
 
-
-### Buscar entregador por ID
-GET {{baseUrl}}/Couriers/{{courierJoao}}
-Accept: application/json
-
-
 ##################################################
-###  MOTOCYCLES (MOTOS)
+###  MOTORCYCLES (MOTOS)
 ##################################################
 
 ### Listar todas as motos
 GET {{baseUrl}}/Motorcycles
 Accept: application/json
 
+### Buscar moto por ID
+GET {{baseUrl}}/Motorcycles/{{motoHonda}}
+Accept: application/json
 
 ### Criar nova moto
 POST {{baseUrl}}/Motorcycles
@@ -51,15 +51,17 @@ Content-Type: application/json
   "year": 2021
 }
 
+##################################################
+### RENTALS (ALUGUÉIS)
+##################################################
 
-### Buscar moto por ID
-GET {{baseUrl}}/Motorcycles/{{motoHonda}}
+### Listar todos os aluguéis
+GET {{baseUrl}}/Rentals
 Accept: application/json
 
-
-##################################################
-###  RENTALS (ALUGUÉIS)
-##################################################
+### Buscar aluguel por ID
+GET {{baseUrl}}/Rentals/f343595a-889c-4a0b-816c-373e9bceddf3
+Accept: application/json
 
 ### Criar aluguel (João aluga Honda)
 POST {{baseUrl}}/Rentals
@@ -71,7 +73,6 @@ Content-Type: application/json
   "planDays": 7
 }
 
-
 ### Criar aluguel (Maria aluga Yamaha)
 POST {{baseUrl}}/Rentals
 Content-Type: application/json
@@ -82,19 +83,8 @@ Content-Type: application/json
   "planDays": 15
 }
 
-
-### Listar todos os aluguéis
-GET {{baseUrl}}/Rentals
-Accept: application/json
-
-
-### Buscar aluguel por ID
-GET {{baseUrl}}/Rentals/{{rentalId}}
-Accept: application/json
-
-
 ### Registrar devolução da moto (PATCH)
-PATCH {{baseUrl}}/Rentals/{{rentalId}}/return
+PATCH {{baseUrl}}/Rentals/f343595a-889c-4a0b-816c-373e9bceddf3/return
 Content-Type: application/json
 
 {

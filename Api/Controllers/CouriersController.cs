@@ -28,6 +28,19 @@ namespace Api.Controllers
         }
 
         /// <summary>
+        /// Busca um entregador por ID.
+        /// </summary>
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> GetById(Guid id, [FromServices] Domain.Interfaces.ICourierRepository courierRepository)
+        {
+            var courier = await courierRepository.GetByIdAsync(id);
+            if (courier == null)
+                return NotFound(new { error = "Courier not found" });
+
+            return Ok(courier);
+        }
+
+        /// <summary>
         /// Cria um novo entregador.
         /// </summary>
         [HttpPost]
@@ -43,7 +56,7 @@ namespace Api.Controllers
                 if (!result.Success)
                     return BadRequest(new { errors = result.Errors });
 
-                return CreatedAtAction(nameof(GetAll), new { id = result.Data?.Id }, result.Data);
+                return CreatedAtAction(nameof(GetById), new { id = result.Data?.Id }, result.Data);
             }
             catch (Exception ex)
             {
