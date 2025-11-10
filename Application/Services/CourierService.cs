@@ -29,7 +29,7 @@ namespace Application.Services
                 Id = Guid.NewGuid(),
                 Name = dto.Name,
                 Cnpj = dto.Cnpj,
-                BirthDate = dto.BirthDate,
+                BirthDate = DateTime.SpecifyKind(dto.BirthDate, DateTimeKind.Utc),
                 CnhNumber = dto.CnhNumber,
                 CnhCategory = dto.CnhCategory,
                 CnhImagePath = dto.CnhImagePath

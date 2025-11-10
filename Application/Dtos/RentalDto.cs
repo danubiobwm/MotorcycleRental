@@ -3,7 +3,7 @@ using System;
 namespace Application.Dtos
 {
     public record RentalDto(
-      Guid Id,
+        Guid Id,
         Guid CourierId,
         Guid MotorcycleId,
         DateTime StartDate,

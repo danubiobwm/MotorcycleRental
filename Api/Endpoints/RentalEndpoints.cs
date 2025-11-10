@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Domain.Interfaces;
 using Domain.Entities;
 using Application.Dtos;
-using System.Linq;
 
 namespace Api.Endpoints
 {
@@ -15,17 +14,19 @@ namespace Api.Endpoints
         {
             var group = app.MapGroup("/rentals");
 
-            // POST /rentals - create rental
+            // POST /rentals - criar locação
             group.MapPost("", async (RentalCreateDto dto, IRentalRepository rentalRepo, ICourierRepository courierRepo, IMotorcycleRepository motorcycleRepo) =>
             {
-                if (dto == null) return Results.BadRequest();
+                if (dto == null)
+                    return Results.BadRequest(new { message = "Request body is required" });
 
                 var courier = await courierRepo.GetByIdAsync(dto.CourierId);
                 if (courier == null)
                     return Results.BadRequest(new { message = "Courier not found" });
 
-                // CNH eligibility (assuming courier has property CnhType)
-                var cnh = courier.GetType().GetProperty("CnhType")?.GetValue(courier)?.ToString()?.ToUpperInvariant() ?? "";
+                // CNH eligibility (courier deve ter A ou A+B)
+                var cnhCategoryProp = courier.GetType().GetProperty("CnhCategory");
+                var cnh = cnhCategoryProp?.GetValue(courier)?.ToString()?.ToUpperInvariant() ?? "";
                 if (!(cnh == "A" || cnh == "A+B"))
                     return Results.BadRequest(new { message = "Courier CNH not eligible for renting (needs A or A+B)" });
 
@@ -33,12 +34,12 @@ namespace Api.Endpoints
                 if (motorcycle == null)
                     return Results.BadRequest(new { message = "Motorcycle not found" });
 
-                // plan days handling + daily rate mapping
+                // plano e taxa diária
                 if (!RentalPlan.TryGetPlan(dto.PlanDays, out var dailyRate))
                     return Results.BadRequest(new { message = "Invalid plan days" });
 
                 var creationDate = DateTime.UtcNow;
-                var startDate = creationDate.Date.AddDays(1); // first day after creation
+                var startDate = creationDate.Date.AddDays(1);
                 var expectedEndDate = startDate.AddDays(dto.PlanDays - 1);
 
                 var rental = new Rental
@@ -48,12 +49,11 @@ namespace Api.Endpoints
                     MotorcycleId = dto.MotorcycleId,
                     StartDate = startDate,
                     ExpectedEndDate = expectedEndDate,
-                    EndDate = null,
                     PlanDays = dto.PlanDays,
                     DailyRate = dailyRate
                 };
 
-                // Some entity models may have CreationDate, set it if exists
+                // define CreationDate se existir no modelo
                 var creationProp = rental.GetType().GetProperty("CreationDate");
                 creationProp?.SetValue(rental, creationDate);
 
@@ -64,18 +64,26 @@ namespace Api.Endpoints
             })
             .Produces<RentalDto>(201);
 
-            // PATCH /rentals/{id}/return - register actual return date and compute cost
-            group.MapPatch("/{id:guid}/return", async (Guid id, RentalReturnDto body, IRentalRepository rentalRepo) =>
+            // PATCH /rentals/{id}/return - registrar devolução e calcular custo
+            group.MapPatch("/{id:guid}/return", async (Guid id, RentalReturnDto dto, IRentalRepository rentalRepo) =>
             {
-                var rental = await rentalRepo.GetByIdAsync(id);
-                if (rental == null) return Results.NotFound();
+                if (dto == null)
+                    return Results.BadRequest(new { message = "Request body is required" });
 
-                var endDate = body?.ReturnDate?.ToUniversalTime() ?? DateTime.UtcNow;
+                var rental = await rentalRepo.GetByIdAsync(id);
+                if (rental == null)
+                    return Results.NotFound(new { message = "Rental not found" });
+
+                var endDate = dto.ReturnDate.ToUniversalTime();
+
+                // atualiza EndDate
                 var endDateProp = rental.GetType().GetProperty("EndDate");
                 endDateProp?.SetValue(rental, endDate);
 
+                // calcula custo total
                 var total = CalculateReturnCost(rental, endDate);
 
+                // atualiza no banco
                 var updateMethod = rentalRepo.GetType().GetMethod("UpdateAsync") ?? rentalRepo.GetType().GetMethod("Update");
                 if (updateMethod != null)
                 {
@@ -89,17 +97,19 @@ namespace Api.Endpoints
             })
             .Produces<ReturnResultDto>(200);
 
-            // GET /rentals/{id}
+            // GET /rentals/{id} - buscar locação por ID
             group.MapGet("/{id:guid}", async (Guid id, IRentalRepository rentalRepo) =>
             {
                 var r = await rentalRepo.GetByIdAsync(id);
-                if (r == null) return Results.NotFound();
+                if (r == null)
+                    return Results.NotFound(new { message = "Rental not found" });
+
                 return Results.Ok(new RentalDto(r));
             })
             .Produces<RentalDto>(200);
         }
 
-        // Cost calculation logic
+        // cálculo de custo
         private static decimal CalculateReturnCost(Rental r, DateTime endDate)
         {
             var start = r.StartDate.Date;
@@ -108,8 +118,11 @@ namespace Api.Endpoints
 
             decimal baseTotal = r.DailyRate * r.PlanDays;
 
-            if (actual == expected) return baseTotal;
+            // devolução no prazo
+            if (actual == expected)
+                return baseTotal;
 
+            // devolução antecipada
             if (actual < expected)
             {
                 int unusedDays = (expected - actual).Days;
@@ -127,21 +140,24 @@ namespace Api.Endpoints
                 return Math.Round(usedTotal + penalty, 2);
             }
 
-            // actual > expected
+            // devolução após o prazo
             int extraDays = (actual - expected).Days;
             decimal extras = extraDays * 50m;
             return Math.Round(baseTotal + extras, 2);
         }
     }
 
-    // DTOs local to endpoint (avoid duplication with Application.Dtos)
+    // DTOs locais
     public record RentalCreateDto(Guid Id, Guid CourierId, Guid MotorcycleId, int PlanDays);
 
-    public record RentalReturnDto(DateTime? ReturnDate);
+    public class RentalReturnDto
+    {
+        public DateTime ReturnDate { get; set; }
+    }
 
     public record ReturnResultDto(Guid RentalId, decimal TotalCost, DateTime StartDate, DateTime ExpectedEndDate, DateTime? EndDate);
 
-    // helper for plan/day rate
+    // planos e tarifas
     public static class RentalPlan
     {
         public static bool TryGetPlan(int days, out decimal daily)
